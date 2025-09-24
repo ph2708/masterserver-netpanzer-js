@@ -1,40 +1,41 @@
-# Masterserver Node.js para NetPanzer
+# NetPanzer Masterserver (Node.js)
 
-Um servidor mestre (`masterserver`) para o jogo **NetPanzer**, implementado em Node.js. Ele gerencia a lista de servidores de jogo ativos, envia desafios de **echo** via UDP e responde a clientes com a lista de servidores.
-
----
-
-## Funcionalidades
-
-* Gerencia até **64 servidores de jogo** ativos.
-* Valida servidores com **heartbeat** e remove inativos após 5 minutos.
-* Suporta comandos:
-
-  * **heartbeat**: atualiza ou registra servidor.
-  * **list\gamename\netpanzer\final**: retorna lista de servidores ativos.
-* Envia **desafios UDP Echo** para verificação de servidores.
-* Permite **shutdown remoto** via UDP, somente a partir do endereço `127.0.0.1`.
+A **master server** for the game **NetPanzer**, implemented in Node.js.
+It manages active game servers, sends **UDP echo challenges**, and responds to clients with the server list.
 
 ---
 
-## Pré-requisitos
+## Features
+
+* Manages up to **64 active game servers**.
+* Validates servers via **heartbeat** and removes inactive ones after 5 minutes.
+* Supports commands:
+
+  * **heartbeat** – updates or registers a server.
+  * **list\gamename\netpanzer\final** – returns the list of active servers.
+* Sends **UDP Echo challenges** to validate servers.
+* Allows **remote shutdown** via UDP, only from `127.0.0.1`.
+
+---
+
+## Prerequisites
 
 * Node.js >= 18
-* npm (para instalar dependências, se necessário)
-* Porta **28900** aberta (TCP e UDP)
+* npm (optional, for installing dependencies)
+* Port **28900** open (TCP and UDP)
 
 ---
 
-## Instalação
+## Installation
 
-1. Clone o repositório:
+1. Clone the repository:
 
 ```bash
-git clone https://github.com/seu-usuario/netpanzer-masterserver.git
+git clone https://github.com/your-username/netpanzer-masterserver.git
 cd netpanzer-masterserver
 ```
 
-2. Instale dependências (nenhuma externa neste projeto, mas opcional):
+2. Install dependencies (none required, but optional):
 
 ```bash
 npm install
@@ -42,63 +43,63 @@ npm install
 
 ---
 
-## Uso
+## Usage
 
-### Iniciar o servidor
+### Start the server
 
 ```bash
 node masterserver_full.js
 ```
 
-O servidor vai escutar **TCP e UDP na porta 28900**:
+The server will listen on **TCP and UDP port 28900**:
 
 ```text
 TCP listening on port 28900
 UDP listening on port 28900
 ```
 
-### Comando de shutdown remoto
+### Remote shutdown command
 
-Envie via UDP a mensagem:
+Send via UDP:
 
 ```
 shutdown!
 ```
 
-apenas a partir do endereço `127.0.0.1`.
+Only accepted from `127.0.0.1`.
 
 ---
 
-## Protocolo TCP
+## TCP Protocol
 
 ### Heartbeat
 
-Os servidores de jogo enviam:
+Game servers send:
 
 ```
 heartbeat\port\<PORT>\protocol\<PROTOCOL>
 ```
 
-* `PORT` → porta do servidor de jogo
-* `PROTOCOL` → protocolo utilizado pelo servidor
+* `PORT` → game server port
+* `PROTOCOL` → server protocol version
 
-O masterserver:
+The masterserver:
 
-1. Atualiza timestamp do servidor.
-2. Remove servidores inativos.
-3. Envia echo key via UDP para validação.
+1. Updates server timestamp.
+2. Removes inactive servers.
+3. Sends UDP echo key for validation.
 
 ---
 
-### Listagem de servidores
+### Server list
 
-Clientes podem solicitar a lista de servidores ativos:
+Clients can request the list of active servers:
 
 ```
 list\gamename\netpanzer\final
 ```
 
-O masterserver responde:
+The masterserver responds:
 
 ```
 \ip\<IP>\port\<PORT>\ip\<IP2>\port\<PORT2>\final\
@@ -106,32 +107,36 @@ O masterserver responde:
 
 ---
 
-## Estrutura do Projeto
+## Project Structure
 
 ```
-masterserver_full.js   # Servidor mestre principal
+masterserver_full.js   # Main masterserver file
 ```
 
 ---
 
-## Configurações
+## Configuration
 
-* `PORT` → Porta TCP/UDP do masterserver (default: 28900)
-* `MAX_SERVERS` → Número máximo de servidores registrados (default: 64)
-* `SERVER_TIMEOUT` → Tempo limite de inatividade de servidores (default: 5 minutos)
-* `ADMIN_ADDR` → Endereço autorizado para shutdown (default: 127.0.0.1)
+* `PORT` → TCP/UDP port of masterserver (default: 28900)
+* `MAX_SERVERS` → Maximum registered servers (default: 64)
+* `SERVER_TIMEOUT` → Server inactivity timeout in milliseconds (default: 5 minutes)
+* `ADMIN_ADDR` → Authorized address for shutdown (default: 127.0.0.1)
+
+---
+
+## Logging
+
+The server logs:
+
+* TCP/UDP connections
+* Received heartbeats
+* Inactive server removal
+* Echo messages sent
+* TCP errors
 
 ---
 
-## Logs
+## License
 
-O servidor registra no console:
-
-* Conexões TCP/UDP
-* Heartbeats recebidos
-* Remoção de servidores inativos
-* Envios de echo
-* Erros TCP
-
----
+MIT License © \[Your Name]
 

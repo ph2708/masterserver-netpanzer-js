@@ -6,13 +6,13 @@ const crypto = require('crypto');
 
 const PORT = 28900;
 const MAX_SERVERS = 64;
-const SERVER_TIMEOUT = 5 * 60 * 1000; // 5 minutos
+const SERVER_TIMEOUT = 5 * 60 * 1000; // 5 minutes
 const ECHO_PREFIX = '\\echo\\';
 const FINAL = '\\final\\';
 const ADMIN_ADDR = '127.0.0.1';
 const SHUTDOWN_CMD = 'shutdown!';
 
-const gsArr = []; // Lista de servidores
+const gsArr = []; // Server list
 
 // UDP socket
 const udpSocket = dgram.createSocket('udp4');
@@ -28,14 +28,14 @@ udpSocket.on('message', (msg, rinfo) => {
         process.exit(0);
     }
 
-    // Aqui podemos validar echo response, se necessário
+    // Here we can validate echo response, if necessary
 });
 
 udpSocket.bind(PORT, () => {
     console.log(`UDP listening on port ${PORT}`);
 });
 
-// Função para gerar chave aleatória do echo
+// Function to generate random echo key
 function generateEchoKey() {
     return Math.floor(Math.random() * 9000) + 1000; // 1000-9999
 }
@@ -66,7 +66,7 @@ const tcpServer = net.createServer(socket => {
             }
 
             if (port > 1024 && port < 65535) {
-                // Limpa servidores inativos
+                // Remove inactive servers
                 const now = Date.now();
                 for (let i = gsArr.length - 1; i >= 0; i--) {
                     if (now - gsArr[i].timestamp > SERVER_TIMEOUT) {
@@ -75,7 +75,7 @@ const tcpServer = net.createServer(socket => {
                     }
                 }
 
-                // Verifica se já existe
+                // Check if already exists
                 let existing = gsArr.find(gs => gs.addr === clientIP && gs.port === port);
                 if (existing) {
                     existing.timestamp = now;
@@ -83,7 +83,7 @@ const tcpServer = net.createServer(socket => {
                     const echoKey = generateEchoKey();
                     gsArr.push({ addr: clientIP, port, protocol, timestamp: now, echokey: echoKey });
 
-                    // Envia echo challenge via UDP
+                    // Send echo challenge via UDP
                     const echoMsg = ECHO_PREFIX + echoKey;
                     udpSocket.send(echoMsg, port, clientIP, err => {
                         if (err) console.error(`UDP send error: ${err}`);
@@ -104,7 +104,7 @@ const tcpServer = net.createServer(socket => {
             tokens[2] === 'netpanzer' &&
             tokens[3] === 'final') {
 
-            // Monta resposta
+            // Build response
             let response = '';
             const now = Date.now();
             for (let i = gsArr.length - 1; i >= 0; i--) {
@@ -120,7 +120,7 @@ const tcpServer = net.createServer(socket => {
             return;
         }
 
-        socket.end(); // Comando inválido
+        socket.end(); // Invalid command
     });
 
     socket.on('close', () => {

@@ -31,8 +31,9 @@ It manages active game servers, sends **UDP echo challenges**, and responds to c
 1. Clone the repository:
 
 ```bash
+mkdir masterservernp
 git clone https://github.com/your-username/netpanzer-masterserver.git
-cd netpanzer-masterserver
+cd masterservernp
 ```
 
 2. Install dependencies (none required, but optional):
@@ -48,7 +49,7 @@ npm install
 ### Start the server
 
 ```bash
-node masterserver_full.js
+node masterserver.js
 ```
 
 The server will listen on **TCP and UDP port 28900**:
